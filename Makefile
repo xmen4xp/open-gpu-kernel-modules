@@ -11,7 +11,7 @@
 ###########################################################################
 
 nv_kernel_o                = src/nvidia/$(OUTPUTDIR)/nv-kernel.o
-nv_kernel_o_binary         = kernel-open/nvidia/nv-kernel.o_binary
+nv_kernel_o_binary         = kernel-open/mynvidia/nv-kernel.o_binary
 
 nv_modeset_kernel_o        = src/nvidia-modeset/$(OUTPUTDIR)/nv-modeset-kernel.o
 nv_modeset_kernel_o_binary = kernel-open/nvidia-modeset/nv-modeset-kernel.o_binary
@@ -55,7 +55,7 @@ $(nv_modeset_kernel_o_binary): $(nv_modeset_kernel_o)
 ###########################################################################
 
 .PHONY: modules
-modules: $(nv_kernel_o_binary) $(nv_modeset_kernel_o_binary)
+modules: $(nv_kernel_o_binary)
 	$(MAKE) -C kernel-open modules
 
 ###########################################################################

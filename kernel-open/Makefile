@@ -33,6 +33,7 @@ else
 
   KERNEL_OUTPUT := $(KERNEL_SOURCES)
   KBUILD_PARAMS :=
+  $(info    KERNEL_OUTPUT is $(KERNEL_OUTPUT))
 
   ifdef SYSOUT
     ifneq ($(SYSOUT), $(KERNEL_SOURCES))
@@ -91,10 +92,11 @@ else
     endif
   endif
 
-  NV_KERNEL_MODULES ?= $(wildcard nvidia nvidia-uvm nvidia-vgpu-vfio nvidia-modeset nvidia-drm nvidia-peermem)
+  NV_KERNEL_MODULES ?= $(wildcard mynvidia) 
   NV_KERNEL_MODULES := $(filter-out $(NV_EXCLUDE_KERNEL_MODULES), \
                                     $(NV_KERNEL_MODULES))
   INSTALL_MOD_DIR ?= kernel/drivers/video
+  $(info    NV_KERNEL_MODULES is $(NV_KERNEL_MODULES))
 
   NV_VERBOSE ?=
   SPECTRE_V2_RETPOLINE ?= 0
@@ -149,7 +151,7 @@ else
 
   %-linux.o: modules
 	$(LD) $(NV_MODULE_COMMON_SCRIPTS) -r -o $@ \
-	  $(subst nv,nvidia,$*).mod.o $(subst nv,nvidia,$*)/$*-interface.o
+	  $(subst nv,mynvidia,$*).mod.o $(subst nv,mynvidia,$*)/$*-interface.o
 
   # Kbuild's "clean" rule won't clean up the conftest headers on its own, and
   # clean-dirs doesn't appear to work as advertised.

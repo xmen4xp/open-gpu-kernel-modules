@@ -6,13 +6,13 @@
 # Define NVIDIA_{SOURCES,OBJECTS}
 #
 
-include $(src)/nvidia/nvidia-sources.Kbuild
-NVIDIA_OBJECTS = $(patsubst %.c,%.o,$(NVIDIA_SOURCES))
+include $(src)/mynvidia/mynvidia-sources.Kbuild
+NVIDIA_OBJECTS = $(patsubst %.c,%.o,$(MYNVIDIA_SOURCES))
 
-obj-m += nvidia.o
-nvidia-y := $(NVIDIA_OBJECTS)
+obj-m += mynvidia.o
+mynvidia-y := $(NVIDIA_OBJECTS)
 
-NVIDIA_KO = nvidia/nvidia.ko
+NVIDIA_KO = mynvidia/mynvidia.ko
 
 
 #
@@ -37,8 +37,8 @@ NVIDIA_KO = nvidia/nvidia.ko
 # and needs to be re-executed.
 #
 
-NVIDIA_BINARY_OBJECT := $(src)/nvidia/nv-kernel.o_binary
-NVIDIA_BINARY_OBJECT_O := nvidia/nv-kernel.o
+NVIDIA_BINARY_OBJECT := $(src)/mynvidia/nv-kernel.o_binary
+NVIDIA_BINARY_OBJECT_O := mynvidia/nv-kernel.o
 
 quiet_cmd_symlink = SYMLINK $@
  cmd_symlink = ln -sf $< $@
@@ -48,14 +48,14 @@ targets += $(NVIDIA_BINARY_OBJECT_O)
 $(obj)/$(NVIDIA_BINARY_OBJECT_O): $(NVIDIA_BINARY_OBJECT) FORCE
 	$(call if_changed,symlink)
 
-nvidia-y += $(NVIDIA_BINARY_OBJECT_O)
+mynvidia-y += $(NVIDIA_BINARY_OBJECT_O)
 
 
 #
 # Define nvidia.ko-specific CFLAGS.
 #
 
-NVIDIA_CFLAGS += -I$(src)/nvidia
+NVIDIA_CFLAGS += -I$(src)/mynvidia
 NVIDIA_CFLAGS += -DNVIDIA_UNDEF_LEGACY_BIT_MACROS
 
 ifeq ($(NV_BUILD_TYPE),release)
@@ -82,7 +82,7 @@ NV_COMPILER_VERSION_HEADER = $(obj)/nv_compiler.h
 $(NV_COMPILER_VERSION_HEADER):
 	@echo \#define NV_COMPILER \"`$(CC) -v 2>&1 | tail -n 1`\" > $@
 
-$(obj)/nvidia/nv-procfs.o: $(NV_COMPILER_VERSION_HEADER)
+$(obj)/mynvidia/nv-procfs.o: $(NV_COMPILER_VERSION_HEADER)
 
 clean-files += $(NV_COMPILER_VERSION_HEADER)
 
@@ -93,7 +93,7 @@ clean-files += $(NV_COMPILER_VERSION_HEADER)
 # kernel interface file.
 #
 
-NVIDIA_INTERFACE := nvidia/nv-interface.o
+NVIDIA_INTERFACE := mynvidia/nv-interface.o
 
 # Linux kernel v5.12 and later looks at "always-y", Linux kernel versions 
 # before v5.6 looks at "always"; kernel versions between v5.12 and v5.6
