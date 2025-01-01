@@ -1971,7 +1971,7 @@ static inline NvU32 nv_default_irq_flags(nv_state_t *nv)
     #define NV_GET_UNUSED_FD_FLAGS(flags)  (-1)
 #endif
 
-#define MODULE_BASE_NAME "nvidia"
+#define MODULE_BASE_NAME "mynvidia"
 #define MODULE_INSTANCE_NUMBER 0
 #define MODULE_INSTANCE_STRING ""
 #define MODULE_NAME MODULE_BASE_NAME MODULE_INSTANCE_STRING

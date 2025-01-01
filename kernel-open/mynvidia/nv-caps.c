@@ -32,6 +32,8 @@ extern int NVreg_ModifyDeviceFiles;
 
 /* sys_close() or __close_fd() */
 #include <linux/syscalls.h>
+#include <linux/kdev_t.h>
+
 
 #define NV_CAP_DRV_MINOR_COUNT 8192
 
@@ -176,6 +178,7 @@ struct
     dev_t devno;
 } g_nv_cap_drv;
 
+#define MYNV_CAP_PROCFS_DIR "driver/mynvidia-caps"
 #define NV_CAP_PROCFS_DIR "driver/nvidia-caps"
 #define NV_CAP_NAME_BUF_SIZE 128
 
@@ -273,7 +276,7 @@ static int nv_cap_procfs_init(void)
 {
     static struct proc_dir_entry *file_entry;
 
-    nv_cap_procfs_dir = NV_CREATE_PROC_DIR(NV_CAP_PROCFS_DIR, NULL);
+    nv_cap_procfs_dir = NV_CREATE_PROC_DIR(MYNV_CAP_PROCFS_DIR, NULL);
     if (nv_cap_procfs_dir == NULL)
     {
         return -EACCES;
@@ -733,9 +736,12 @@ nv_cap_t* NV_API_CALL nv_cap_create_dir_entry(nv_cap_t *parent_cap,
 
     mode = (S_IFDIR | S_IRUGO | S_IXUGO);
 
+    nv_printf(NV_DBG_ERRORS, "NVRM: nv_cap_create_dir_entry: name %s.\n", name);
+
     cap->entry = NV_PROC_MKDIR_MODE(name, mode, parent_cap->entry);
     if (cap->entry == NULL)
     {
+        nv_printf(NV_DBG_ERRORS, "NVRM: nv_cap_create_dir_entry: calling nv_cap_free\n");
         nv_cap_free(cap);
         return NULL;
     }
@@ -817,7 +823,7 @@ int NV_API_CALL nv_cap_drv_init(void)
     rc = alloc_chrdev_region(&g_nv_cap_drv.devno,
                              0,
                              NV_CAP_DRV_MINOR_COUNT,
-                             "nvidia-caps");
+                             "mynvidia-caps");
     if (rc < 0)
     {
         nv_printf(NV_DBG_ERRORS, "nv-caps-drv failed to create cdev region.\n");
@@ -827,6 +833,8 @@ int NV_API_CALL nv_cap_drv_init(void)
     cdev_init(&g_nv_cap_drv.cdev, &g_nv_cap_drv_fops);
 
     g_nv_cap_drv.cdev.owner = THIS_MODULE;
+    
+    nv_printf(NV_DBG_ERRORS, "nv-cap device: %ld Major# %d Minor# %d\n",g_nv_cap_drv.devno, MAJOR(g_nv_cap_drv.devno), MINOR(g_nv_cap_drv.devno));
 
     rc = cdev_add(&g_nv_cap_drv.cdev, g_nv_cap_drv.devno,
                   NV_CAP_DRV_MINOR_COUNT);
